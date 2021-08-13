@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import subprocess
+import argparse
+
+# Argument setup
+parser = argparse.ArgumentParser(description="Create docker compose mender artifact.")
+parser.add_argument("--artifact-name", required=True, help="Artifact name")
+parser.add_argument("--device-types", nargs="*", required=True, help="Target device type identifications")
+parser.add_argument("--software-name", required=True, help="Name of the key to store the software version")
+parser.add_argument("--software-version", required=True, help="Value for the software version")
+
+# Path args
+output_path = Path("docker-compose-artifact.mender")
+parser.add_argument("--output-path", type=Path, default=output_path, help="Path to output file")
+parser.add_argument("COMPOSEFILE", type=Path, help="Path to docker-compose file")
+
+# Populate write command
+parsed_args, passthrough_args = parser.parse_known_args()
+write_command = [
+    "mender-artifact", "write", "module-image",
+    "--type", "docker-compose",
+    "--artifact-name", parsed_args.artifact_name,
+    "--file", str(parsed_args.COMPOSEFILE.resolve()),
+    "--output-path", str(parsed_args.output_path.resolve()),
+    "--software-name", parsed_args.software_name,
+    "--software-version", parsed_args.software_version,
+    "--compression", "gzip",
+    *passthrough_args,
+]
+# Add each device type that is supported
+for device_type in parsed_args.device_types:
+    write_command.extend(["--device-type", device_type])
+
+# Create mender artifact
+subprocess.run(write_command)
+print(f"Artifact {parsed_args.output_path} generated successfully:")
+subprocess.run(["mender-artifact", "read", str(parsed_args.output_path.resolve())])
