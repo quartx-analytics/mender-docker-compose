@@ -1,0 +1,32 @@
+name: "Docker Compose Mender Artifact"
+description: "Create a mender artifact to install docker containers using a docker-compose file."
+author: "Quartx(William Forde)"
+inputs:
+  compose-file:
+    description: "Path to docker-compose file"
+    required: true
+  software-name:
+    description: "Name of software being packaged"
+    required: true
+  software-version:
+    description: "Value for the software version, defaults to workflow run id"
+    required: false
+    default: "${{ github.run_id }}"
+  output-filename:
+    description: "Filename for output file, must end with '.mender'"
+    required: false
+    default: "docker-compose-artifact.mender"
+outputs:
+  artifact-file:
+    description: "The filename for the mender artifact file"
+    value: ${{ inputs.output-filename }}
+runs:
+  using: "composite"
+  steps:
+    - name: Download mender artifact script
+      run: curl https://downloads.mender.io/mender-artifact/3.6.0/linux/mender-artifact --output /usr/local/bin/mender-artifact
+      shell: bash
+
+    - name: Build artifact
+      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types raspberrypi3 raspberrypi4 --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path ${{ inputs.output-filename }}
+      shell: bash

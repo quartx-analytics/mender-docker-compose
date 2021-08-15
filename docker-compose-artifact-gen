@@ -8,7 +8,7 @@ import json
 # Argument setup
 parser = argparse.ArgumentParser(description="Create docker compose mender artifact.")
 parser.add_argument("--device-types", nargs="*", required=True, help="Target device type identifications")
-parser.add_argument("--software-name", required=True, help="Name of software been packaged")
+parser.add_argument("--software-name", required=True, help="Name of software being packaged")
 parser.add_argument("--software-version", required=True, help="Value for the software version")
 
 # Path args
