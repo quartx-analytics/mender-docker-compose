@@ -4,6 +4,7 @@ import subprocess
 import argparse
 import tempfile
 import json
+import sys
 
 # Argument setup
 parser = argparse.ArgumentParser(description="Create docker compose mender artifact.")
@@ -12,8 +13,8 @@ parser.add_argument("--software-name", required=True, help="Name of software bei
 parser.add_argument("--software-version", required=True, help="Value for the software version")
 
 # Path args
-output_path = Path("docker-compose-artifact.mender")
-parser.add_argument("--output-path", type=Path, default=output_path, help="Path to output file")
+help_text = "Path to output file, default to '{software name}-{software version}-artifact.mender'"
+parser.add_argument("--output-path", type=Path, nargs="?", default=None, const=None, help=help_text)
 parser.add_argument("COMPOSEFILE", type=Path, help="Path to docker-compose file")
 parsed_args, passthrough_args = parser.parse_known_args()
 
@@ -26,13 +27,18 @@ metafile = tempfile.NamedTemporaryFile(mode="w", delete=False)
 json.dump(metadata, metafile.file)
 metafile.close()
 
+# Build output-path & artifact-name
+artifact_name = f"{parsed_args.software_name}-{parsed_args.software_version}".replace(" ", "-")
+output_path = parsed_args.output_path if parsed_args.output_path else Path(f"{artifact_name}-artifact.mender")
+output_path = str(output_path.resolve())
+
 # Populate write command
 write_command = [
     "mender-artifact", "write", "module-image",
     "--type", "docker-compose",
-    "--artifact-name", f"{parsed_args.software_name}-{parsed_args.software_version}",
+    "--artifact-name", artifact_name,
     "--file", str(parsed_args.COMPOSEFILE.resolve()),
-    "--output-path", str(parsed_args.output_path.resolve()),
+    "--output-path", output_path,
     "--software-name", parsed_args.software_name,
     "--software-version", parsed_args.software_version,
     "--meta-data", metafile.name,
@@ -44,7 +50,17 @@ for device_type in parsed_args.device_types:
     write_command.extend(["--device-type", device_type])
 
 # Create mender artifact
-subprocess.run(write_command)
-print(f"Artifact {parsed_args.output_path} generated successfully:")
-subprocess.run(["mender-artifact", "read", str(parsed_args.output_path.resolve())])
-Path(metafile.name).unlink(missing_ok=True)
+try:
+    subprocess.run(write_command, check=True)
+except subprocess.CalledProcessError as err:
+    print(f"Failed to create Artifact {parsed_args.output_path}:")
+    exit_code = err.returncode
+else:
+    print(f"Artifact {parsed_args.output_path} generated successfully:")
+    subprocess.run(["mender-artifact", "read", output_path])
+    exit_code = 0
+finally:
+    Path(metafile.name).unlink(missing_ok=True)
+
+# Always a good idea to return exit code
+sys.exit(exit_code)
