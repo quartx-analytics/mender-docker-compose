@@ -34,3 +34,6 @@ runs:
     - name: Build artifact
       run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types raspberrypi3 raspberrypi4 --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path ${{ inputs.output-filename }}
       shell: bash
+branding:
+  icon: 'briefcase'
+  color: 'purple'
