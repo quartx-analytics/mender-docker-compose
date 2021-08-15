@@ -15,7 +15,7 @@ inputs:
   output-filename:
     description: "Filename for output file, must end with '.mender'"
     required: false
-    default: ""
+    default: "${{ inputs.software-name }}-${{ inputs.software-version }}-artifact.mender"
 outputs:
   artifact-file:
     description: "The filename for the mender artifact file"

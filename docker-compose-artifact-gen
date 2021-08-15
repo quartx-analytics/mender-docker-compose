@@ -53,10 +53,10 @@ for device_type in parsed_args.device_types:
 try:
     subprocess.run(write_command, check=True)
 except subprocess.CalledProcessError as err:
-    print(f"Failed to create Artifact {parsed_args.output_path}:")
+    print(f"Failed to create Artifact {output_path}:")
     exit_code = err.returncode
 else:
-    print(f"Artifact {parsed_args.output_path} generated successfully:")
+    print(f"Artifact {output_path} generated successfully:")
     subprocess.run(["mender-artifact", "read", output_path])
     exit_code = 0
 finally:
