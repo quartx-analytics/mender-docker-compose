@@ -12,14 +12,10 @@ inputs:
     description: "Value for the software version, defaults to workflow run id"
     required: false
     default: "${{ github.run_id }}"
-  output-filename:
-    description: "Filename for output file, must end with '.mender'"
-    required: false
-    default: "${{ inputs.software-name }}-${{ inputs.software-version }}-artifact.mender"
 outputs:
   artifact-file:
     description: "The filename for the mender artifact file"
-    value: ${{ inputs.output-filename }}
+    value: "${{ inputs.software-name }}-${{ inputs.software-version }}-artifact.mender"
 runs:
   using: "composite"
   steps:
@@ -32,7 +28,7 @@ runs:
       shell: bash
 
     - name: Build artifact
-      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types raspberrypi3 raspberrypi4 --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path ${{ inputs.output-filename }}
+      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types raspberrypi3 raspberrypi4 --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path ${{ outputs.artifact-file }}
       shell: bash
 branding:
   icon: 'briefcase'
