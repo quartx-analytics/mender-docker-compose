@@ -25,7 +25,9 @@ case "$STATE" in
         docker ps -q > "$prev_containers_file"
 
         >&2 echo "Running docker compose"
-        docker compose --file "$FILES"/files/docker-compose.yml --remove-orphans --project-name calllogger
+        COMPOSE_FILE=$(jq -r ".compose_file" "$FILES"/header/meta-data)
+        PROJECT_NAME=$(jq -r ".project_name" "$FILES"/header/meta-data)
+        docker compose --file "$FILES"/files/"$COMPOSE_FILE" --project-name "$PROJECT_NAME" --remove-orphans up -d
         ;;
 
     ArtifactRollback)
