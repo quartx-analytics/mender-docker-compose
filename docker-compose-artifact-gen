@@ -2,29 +2,40 @@
 from pathlib import Path
 import subprocess
 import argparse
+import tempfile
+import json
 
 # Argument setup
 parser = argparse.ArgumentParser(description="Create docker compose mender artifact.")
-parser.add_argument("--artifact-name", required=True, help="Artifact name")
 parser.add_argument("--device-types", nargs="*", required=True, help="Target device type identifications")
-parser.add_argument("--software-name", required=True, help="Name of the key to store the software version")
+parser.add_argument("--software-name", required=True, help="Name of software been packaged")
 parser.add_argument("--software-version", required=True, help="Value for the software version")
 
 # Path args
 output_path = Path("docker-compose-artifact.mender")
 parser.add_argument("--output-path", type=Path, default=output_path, help="Path to output file")
 parser.add_argument("COMPOSEFILE", type=Path, help="Path to docker-compose file")
+parsed_args, passthrough_args = parser.parse_known_args()
+
+# Build metadata file
+metadata = {
+    "compose_file": parsed_args.COMPOSEFILE.name,
+    "project_name": parsed_args.software_name,
+}
+metafile = tempfile.NamedTemporaryFile(mode="w", delete=False)
+json.dump(metadata, metafile.file)
+metafile.close()
 
 # Populate write command
-parsed_args, passthrough_args = parser.parse_known_args()
 write_command = [
     "mender-artifact", "write", "module-image",
     "--type", "docker-compose",
-    "--artifact-name", parsed_args.artifact_name,
+    "--artifact-name", f"{parsed_args.software_name}-{parsed_args.software_version}",
     "--file", str(parsed_args.COMPOSEFILE.resolve()),
     "--output-path", str(parsed_args.output_path.resolve()),
     "--software-name", parsed_args.software_name,
     "--software-version", parsed_args.software_version,
+    "--meta-data", metafile.name,
     "--compression", "gzip",
     *passthrough_args,
 ]
@@ -36,3 +47,4 @@ for device_type in parsed_args.device_types:
 subprocess.run(write_command)
 print(f"Artifact {parsed_args.output_path} generated successfully:")
 subprocess.run(["mender-artifact", "read", str(parsed_args.output_path.resolve())])
+Path(metafile.name).unlink(missing_ok=True)
