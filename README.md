@@ -39,5 +39,10 @@ GitHub's upload-artifact action can be used to upload the created artifact to Gi
 At the bottom of the workflow summary page, there is a dedicated section for artifacts.
 
 
+# Notes
+For the artifact to work on mender, all mender devices need to have docker compose install.
+The docker-compose update module file from this repo also needs to be placed in the
+`/usr/share/mender/modules/v3` directory of each device.
+
 # License
 The scripts and documentation in this project are released under the [Apache License](LICENSE)
