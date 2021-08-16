@@ -1,5 +1,5 @@
 # Mender Docker Compose Artifact
-This action allows you to create mender artifacts to deploy docker containers using docker compose.
+This action allows you to create artifacts to deploy docker containers to mender devices using docker compose.
 
 
 Refer [mender](https://mender.io/)
