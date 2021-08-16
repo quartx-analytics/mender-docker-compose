@@ -17,7 +17,7 @@ steps:
 
   - id: mender
     name: Create mender artifact
-    uses: quartx-analytics/mender-docker-compose@v1
+    uses: quartx-analytics/mender-docker-compose@1.0.1
     with:
       compose-file: "docker-compose.yml"
       software-name: "project-name"
