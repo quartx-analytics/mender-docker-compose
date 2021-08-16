@@ -15,7 +15,7 @@ inputs:
 outputs:
   artifact-file:
     description: "The filename for the mender artifact file"
-    value: "${{ inputs.software-name }}-${{ inputs.software-version }}-artifact.mender"
+    value: "${{ inputs.software-name }}-${{ inputs.software-version }}.artifact.mender"
 runs:
   using: "composite"
   steps:
@@ -28,7 +28,7 @@ runs:
       shell: bash
 
     - name: Build artifact
-      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types raspberrypi3 raspberrypi4 --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path ${{ outputs.artifact-file }}
+      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types raspberrypi3 raspberrypi4 --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path "${{ inputs.software-name }}-${{ inputs.software-version }}.artifact.mender"
       shell: bash
 branding:
   icon: 'briefcase'
