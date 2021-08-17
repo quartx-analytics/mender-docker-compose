@@ -21,11 +21,12 @@ steps:
     with:
       compose-file: "docker-compose.yml"
       software-name: "project-name"
+      device-types: "raspberrypi3 raspberrypi4"
 
   - name: Upload mender artifact
     uses: actions/upload-artifact@v2
     with:
-      name: project-artifact
+      name: mender-artifacts
       path: ${{ steps.mender.outputs.artifact-file }}
 ```
 Here we specify the filename for the docker compose file that contains

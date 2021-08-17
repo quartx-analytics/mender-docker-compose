@@ -11,7 +11,10 @@ inputs:
   software-version:
     description: "Value for the software version, defaults to workflow run id"
     required: false
-    default: "${{ github.run_id }}"
+    default: "${{ github.GITHUB_RUN_NUMBER }}"
+  device-types:
+    description: "Target device type identifications, multiple values separated by a space"
+    required: true
 outputs:
   artifact-file:
     description: "The filename for the mender artifact file"
@@ -28,7 +31,7 @@ runs:
       shell: bash
 
     - name: Build artifact
-      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types raspberrypi3 raspberrypi4 --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path "${{ inputs.software-name }}-${{ inputs.software-version }}.artifact.mender"
+      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types ${{ inputs.device-types }} --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path "${{ inputs.software-name }}-${{ inputs.software-version }}.artifact.mender"
       shell: bash
 branding:
   icon: 'briefcase'
