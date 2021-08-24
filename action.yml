@@ -11,7 +11,7 @@ inputs:
   software-version:
     description: "Value for the software version, defaults to workflow run id"
     required: false
-    default: "${{ github.GITHUB_RUN_NUMBER }}"
+    default: "${{ github.run_number }}"
   device-types:
     description: "Target device type identifications, multiple values separated by a space"
     required: true
