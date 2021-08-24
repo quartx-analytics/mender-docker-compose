@@ -18,6 +18,12 @@ case "$STATE" in
 
     Download)
         command -v docker >/dev/null 2>&1 || { echo >&2 "ERROR: Must have docker installed to run this update module."; exit 1; }
+        command docker compose >/dev/null 2>&1 || { echo >&2 "ERROR: Must have docker compose V2 installed to run this update module."; exit 1; }
+
+        >&2 echo "Running docker pull"
+        COMPOSE_FILE=$(jq -r ".compose_file" "$FILES"/header/meta-data)
+        PROJECT_NAME=$(jq -r ".project_name" "$FILES"/header/meta-data)
+        docker compose --file "$FILES"/files/"$COMPOSE_FILE" --project-name "$PROJECT_NAME" pull
         ;;
 
     ArtifactInstall)
@@ -32,7 +38,7 @@ case "$STATE" in
 
     ArtifactRollback)
         >&2 echo "Container rollback started"
-        [ -f "$prev_containers_file" ] ||  (>&2 echo "ERROR: Failed to find rollback reference file [$prev_containers_file]" && exit 1)
+        [ -f "$prev_containers_file" ] || (>&2 echo "ERROR: Failed to find rollback reference file [$prev_containers_file]" && exit 1)
 
         >&2 echo "Stopping all running containers"
         [ -n  "$(docker ps -q)" ] && docker stop "$(docker ps -q)"
