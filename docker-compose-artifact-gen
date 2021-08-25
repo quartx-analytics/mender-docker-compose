@@ -14,11 +14,11 @@ parser.add_argument("--software-version", required=True, help="Value for the sof
 
 # Path args
 parser.add_argument(
-    "--output-path", type=Path, default="",
+    "--output-path", type=Path, default=None,
     help="Path to output file, default to '{software name}-{software version}-artifact.mender'"
 )
 parser.add_argument(
-    "--signing-key", type=Path, default="",
+    "--signing-key", type=Path, default=None,
     help="Path to the private key that will be used to sign the artifact"
 )
 parser.add_argument(
