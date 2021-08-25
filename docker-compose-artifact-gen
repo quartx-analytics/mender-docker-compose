@@ -13,9 +13,17 @@ parser.add_argument("--software-name", required=True, help="Name of software bei
 parser.add_argument("--software-version", required=True, help="Value for the software version")
 
 # Path args
-help_text = "Path to output file, default to '{software name}-{software version}-artifact.mender'"
-parser.add_argument("--output-path", type=Path, nargs="?", default=None, const=None, help=help_text)
-parser.add_argument("COMPOSEFILE", type=Path, help="Path to docker-compose file")
+parser.add_argument(
+    "--output-path", type=Path, default="",
+    help="Path to output file, default to '{software name}-{software version}-artifact.mender'"
+)
+parser.add_argument(
+    "--signing-key", type=Path, default="",
+    help="Path to the private key that will be used to sign the artifact"
+)
+parser.add_argument(
+    "COMPOSEFILE", type=Path, help="Path to docker-compose file"
+)
 parsed_args, passthrough_args = parser.parse_known_args()
 
 # Build metadata file
@@ -45,6 +53,11 @@ write_command = [
     "--compression", "gzip",
     *passthrough_args,
 ]
+
+# Add signing key
+if parsed_args.signing_key:
+    write_command.extend(["--key", parsed_args.signing_key.resolve()])
+
 # Add each device type that is supported
 for device_type in parsed_args.device_types:
     write_command.extend(["--device-type", device_type])

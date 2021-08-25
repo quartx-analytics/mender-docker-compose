@@ -3,7 +3,7 @@ description: "Create a mender artifact to install docker containers using a dock
 author: "Quartx(William Forde)"
 inputs:
   compose-file:
-    description: "Path to docker-compose file"
+    description: "Path to docker-compose.yml file"
     required: true
   software-name:
     description: "Name of software being packaged"
@@ -15,10 +15,14 @@ inputs:
   device-types:
     description: "Target device type identifications, multiple values separated by a space"
     required: true
+  signing-key:
+    description: "The private key that will be used to sign the artifact"
+    required: false
+    default: ""
 outputs:
   artifact-file:
     description: "The filename for the mender artifact file"
-    value: "${{ inputs.software-name }}-${{ inputs.software-version }}.artifact.mender"
+    value: ${{ steps.artifact-filename.outputs.filename }}
 runs:
   using: "composite"
   steps:
@@ -30,9 +34,21 @@ runs:
       run: chmod +x /usr/local/bin/mender-artifact
       shell: bash
 
-    - name: Build artifact
-      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types ${{ inputs.device-types }} --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path "${{ inputs.software-name }}-${{ inputs.software-version }}.artifact.mender"
+    - id: artifact-filename
+      run: echo "::set-output name=filename::${{ inputs.software-name }}-${{ inputs.software-version }}.artifact.mender"
       shell: bash
+
+    - name: Build artifact
+      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types ${{ inputs.device-types }} --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path "${{ steps.artifact-filename.outputs.filename }}"
+      shell: bash
+
+    - name: Sign artifact
+      if: ${{ inputs.signing-key != '' }}
+      run: |
+        echo "$INPUT_SIGNING_KEY" > private.key
+        mender-artifact sign --key private.key ${{ steps.artifact-filename.outputs.filename }}
+        rm private.key
+
 branding:
   icon: 'briefcase'
   color: 'purple'
