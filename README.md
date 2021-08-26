@@ -22,6 +22,7 @@ steps:
       compose-file: "docker-compose.yml"
       software-name: "project-name"
       device-types: "raspberrypi3 raspberrypi4"
+      signing-key: "${{ secrets.ARTIFACT_SIGNING_KEY }}"  # Optional
 
   - name: Upload mender artifact
     uses: actions/upload-artifact@v2
