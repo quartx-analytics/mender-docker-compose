@@ -26,28 +26,18 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Download mender artifact script
-      run: curl https://downloads.mender.io/mender-artifact/3.6.0/linux/mender-artifact --output /usr/local/bin/mender-artifact
-      shell: bash
-
-    - name: Make artifact script executable
-      run: chmod +x /usr/local/bin/mender-artifact
-      shell: bash
-
     - id: artifact-filename
       run: echo "::set-output name=filename::${{ inputs.software-name }}-${{ inputs.software-version }}.artifact.mender"
       shell: bash
 
-    - name: Build artifact
-      run: $GITHUB_ACTION_PATH/docker-compose-artifact-gen docker-compose.yml --device-types ${{ inputs.device-types }} --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path "${{ steps.artifact-filename.outputs.filename }}"
-      shell: bash
+    - shell: bash
+      run: curl https://downloads.mender.io/mender-artifact/3.6.0/linux/mender-artifact --output /usr/local/bin/mender-artifact
 
-    - name: Sign artifact
-      if: ${{ inputs.signing-key != '' }}
-      run: |
-        echo "$INPUT_SIGNING_KEY" > private.key
-        mender-artifact sign --key private.key ${{ steps.artifact-filename.outputs.filename }}
-        rm private.key
+    - shell: bash
+      run: chmod +x /usr/local/bin/mender-artifact
+
+    - shell: bash
+      run: python3 $GITHUB_ACTION_PATH/action.py ${{ inputs.compose-file }} --device-types ${{ inputs.device-types }} --software-name ${{ inputs.software-name }} --software-version ${{ inputs.software-version }} --output-path "${{ steps.artifact-filename.outputs.filename }}" --signing-key "${{ inputs.signing-key }}"
 
 branding:
   icon: 'briefcase'
