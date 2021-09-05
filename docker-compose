@@ -18,7 +18,7 @@ case "$STATE" in
 
     Download)
         command -v docker >/dev/null 2>&1 || { echo >&2 "ERROR: Must have docker installed to run this update module."; exit 1; }
-        command docker-compose >/dev/null 2>&1 || { echo >&2 "ERROR: Must have docker-compose installed to run this update module."; exit 1; }
+        command -v docker-compose >/dev/null 2>&1 || { echo >&2 "ERROR: Must have docker-compose installed to run this update module."; exit 1; }
         ;;
 
     ArtifactInstall)
