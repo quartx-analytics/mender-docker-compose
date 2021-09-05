@@ -18,7 +18,7 @@ case "$STATE" in
 
     Download)
         command -v docker >/dev/null 2>&1 || { echo >&2 "ERROR: Must have docker installed to run this update module."; exit 1; }
-        command docker compose >/dev/null 2>&1 || { echo >&2 "ERROR: Must have docker compose V2 installed to run this update module."; exit 1; }
+        command docker-compose >/dev/null 2>&1 || { echo >&2 "ERROR: Must have docker-compose installed to run this update module."; exit 1; }
         ;;
 
     ArtifactInstall)
@@ -28,8 +28,8 @@ case "$STATE" in
         >&2 echo "Running docker compose"
         COMPOSE_FILE=$(jq -r ".compose_file" "$FILES"/header/meta-data)
         PROJECT_NAME=$(jq -r ".project_name" "$FILES"/header/meta-data)
-        docker compose --file "$FILES"/files/"$COMPOSE_FILE" --project-name "$PROJECT_NAME" pull
-        docker compose --file "$FILES"/files/"$COMPOSE_FILE" --project-name "$PROJECT_NAME" up --detach --no-color --remove-orphans
+        docker-compose --file "$FILES"/files/"$COMPOSE_FILE" --project-name "$PROJECT_NAME" pull
+        docker-compose --file "$FILES"/files/"$COMPOSE_FILE" --project-name "$PROJECT_NAME" up --detach --no-color --remove-orphans
         ;;
 
     ArtifactRollback)
