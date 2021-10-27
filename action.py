@@ -31,7 +31,7 @@ if compose_file.suffix in [".tpl", ".template"]:
     variables = dict(map(lambda x: x.split(":"), parsed_args.variables.split(",")))
     for key, val in variables.items():
         search_key = f"%%{key}%%"
-        file_contents.replace(search_key, val)
+        file_contents = file_contents.replace(search_key, val)
 
     # Save changed docker file
     compose_file = "docker-compose.yml"
