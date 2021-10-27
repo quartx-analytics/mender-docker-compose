@@ -40,7 +40,7 @@ case "$STATE" in
         [ -n  "$(docker ps -q)" ] && docker stop "$(docker ps -q)"
 
         >&2 echo "Starting containers running prior to the update"
-        [ -n "$(cat $prev_containers_file)" ] && docker start $(cat $prev_containers_file)
+        [ -n "$(cat $prev_containers_file)" ] && docker start "$(cat $prev_containers_file)"
         ;;
 
     ArtifactCommit)
