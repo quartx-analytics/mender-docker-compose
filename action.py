@@ -35,7 +35,7 @@ if compose_file.suffix in [".tpl", ".template"]:
 
     # Save changed docker file
     compose_file = "docker-compose.yml"
-    with open("w", compose_file) as stream:
+    with open(compose_file, "w") as stream:
         stream.write(file_contents)
 
 # Private key file
@@ -47,7 +47,7 @@ try:
     subprocess.run(
         [
             os.environ["GITHUB_ACTION_PATH"] + "/docker-compose-artifact-gen",
-            compose_file,
+            str(compose_file),
             *passthrough_args,
             "--signing-key", private_key.name,
         ],
