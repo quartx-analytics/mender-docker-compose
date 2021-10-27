@@ -34,7 +34,7 @@ if compose_file.suffix in [".tpl", ".template"]:
         file_contents.replace(search_key, val)
 
     # Save changed docker file
-    compose_file = parsed_args.compose_file.with_suffix(".yml")
+    compose_file = "docker-compose.yml"
     with open("w", compose_file) as stream:
         stream.write(file_contents)
 
