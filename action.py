@@ -21,14 +21,13 @@ parsed_args, passthrough_args = parser.parse_known_args()
 # Create final compose file if given file is a compose file template
 compose_file = parsed_args.compose_file
 if compose_file.suffix in [".tpl", ".template"]:
-    file_contents = compose_file.read_text()
-
     if parsed_args.variables is None:
         print("The variables argument is required when using a template file.", file=sys.stderr)
         sys.exit(1)
 
     # Extract variables from argument
     variables = dict(map(lambda x: x.split(":"), parsed_args.variables.split(",")))
+    file_contents = compose_file.read_text()
     for key, val in variables.items():
         search_key = f"%%{key}%%"
         file_contents = file_contents.replace(search_key, val)
