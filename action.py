@@ -26,7 +26,7 @@ if compose_file.suffix in [".tpl", ".template"]:
         sys.exit(1)
 
     # Extract variables from argument
-    variables = dict(map(lambda x: x.split(":"), parsed_args.variables.split(",")))
+    variables = dict(map(lambda x: x.split(":"), parsed_args.variables.split(" ")))
     file_contents = compose_file.read_text()
     for key, val in variables.items():
         search_key = f"%%{key}%%"
