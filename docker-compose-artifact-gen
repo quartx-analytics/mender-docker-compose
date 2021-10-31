@@ -5,7 +5,6 @@ import argparse
 import tempfile
 import json
 import sys
-import os
 
 # Argument setup
 parser = argparse.ArgumentParser(description="Create docker compose mender artifact.")
@@ -33,7 +32,7 @@ parsed_args, passthrough_args = parser.parse_known_args()
 
 # Convert --env into a .env file
 with tempfile.NamedTemporaryFile(mode="w", delete=False) as envfile:
-    envfile.writelines(parsed_args.env)
+    envfile.write("\n".join(parsed_args.env))
 envfile = Path(envfile.name)
 envfile = envfile.rename(envfile.with_name("envfile"))
 
