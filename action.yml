@@ -41,7 +41,7 @@ runs:
       run: chmod +x /usr/local/bin/mender-artifact
 
     - shell: bash
-      run: python3 $GITHUB_ACTION_PATH/action.py "${{ inputs.compose-file }}" --variables "${{ inputs.compose-file-variables }}" --device-types ${{ inputs.device-types }} --software-name "${{ inputs.software-name }}" --software-version "${{ inputs.software-version }}" --output-path "${{ steps.artifact-filename.outputs.filename }}" --signing-key "${{ inputs.signing-key }}"
+      run: python3 $GITHUB_ACTION_PATH/action.py "${{ inputs.compose-file }}" --variables "${{ inputs.compose-file-variables }}" --device-types ${{ inputs.device-types }} --software-name "${{ inputs.software-name }}" --software-version ${{ inputs.software-version }} --output-path "${{ steps.artifact-filename.outputs.filename }}" --signing-key "${{ inputs.signing-key }}"
 
 branding:
   icon: 'briefcase'
