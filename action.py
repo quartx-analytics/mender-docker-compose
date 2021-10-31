@@ -12,24 +12,23 @@ import os
 
 # Intercept the signing-key and convert
 parser = argparse.ArgumentParser()
-parser.add_argument("--variables", nargs="?", const=None)
 parser.add_argument("--signing-key", required=True)
+parser.add_argument("--variables", nargs="?", const=None)
 parsed_args, passthrough_args = parser.parse_known_args()
-
-# Extract variables from argument
-variables = map(lambda x: f"--env {x}", parsed_args.variables.split(" "))
 
 # Private key file
 private_key = tempfile.NamedTemporaryFile(mode="w", delete=False)
 private_key.write(parsed_args.signing_key)
 private_key.close()
 
+# Extract variables from argument
+variables = map(lambda x: f"--env {x}", parsed_args.variables.split(" "))
+
 try:
     subprocess.run(
         [
             os.environ["GITHUB_ACTION_PATH"] + "/docker-compose-artifact-gen",
-            *passthrough_args,
-            "--signing-key", private_key.name,
+            *passthrough_args, "--signing-key", private_key.name,
             *variables,
         ],
         check=True

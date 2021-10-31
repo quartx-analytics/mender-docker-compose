@@ -25,7 +25,7 @@ parser.add_argument(
     "COMPOSEFILE", type=Path, help="Path to docker-compose file"
 )
 parser.add_argument(
-    "--env", "-e", action="append", default=[],
+    "-e", "--env", action="append", default=[],
     help="Set compose file environment variable",
 )
 parsed_args, passthrough_args = parser.parse_known_args()
