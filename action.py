@@ -36,6 +36,10 @@ try:
         ],
         check=True
     )
+except subprocess.CalledProcessError as err:
+    print(err.output, file=sys.stdout)
+    print(err.stderr, file=sys.stderr)
+    sys.exit(err.returncode)
 finally:
     Path(private_key.name).unlink(missing_ok=True)
 
