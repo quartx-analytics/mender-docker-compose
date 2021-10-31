@@ -37,10 +37,12 @@ try:
         check=True
     )
 except subprocess.CalledProcessError as err:
-    print(err.output, file=sys.stdout)
-    print(err.stderr, file=sys.stderr)
+    if err.output:
+        print(err.output, file=sys.stdout)
+    if err.stderr:
+        print(err.stderr, file=sys.stderr)
     sys.exit(err.returncode)
+else:
+    sys.exit(0)
 finally:
     Path(private_key.name).unlink(missing_ok=True)
-
-sys.exit(0)
