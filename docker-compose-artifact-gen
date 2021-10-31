@@ -38,7 +38,7 @@ with tempfile.NamedTemporaryFile(mode="w", delete=False) as envfile:
 print(envfile.name)
 print(os.path.exists(envfile.name))
 envfile = Path(envfile.name).with_name("envfile")
-print(envfile.name)
+print(envfile)
 print(os.path.exists(envfile.name))
 
 # Build metadata file
