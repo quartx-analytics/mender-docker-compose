@@ -23,6 +23,7 @@ steps:
       software-name: "project-name"
       device-types: "raspberrypi3 raspberrypi4"
       signing-key: "${{ secrets.ARTIFACT_SIGNING_KEY }}"  # Optional
+      compose-file-variables: "IMAGE_TAG=latest"  # Optional
 
   - name: Upload mender artifact
     uses: actions/upload-artifact@v2
@@ -39,6 +40,10 @@ A signing-key can also be specified if required, this will ensure that the artif
 It will also force the artifact to only work on the mender server that contains the corresponding private key.
 
 GitHub's upload-artifact action can then be used to upload the created artifact to GitHub.
+Support for variables within the docker compose file is supported. See [here](https://docs.docker.com/compose/environment-variables/) for how to use compose file variables.
+The variables can be passed in using the "compose-file-variables" input key. The format is "NAME=VARIABLE", multiple variables are separated by a space.
+
+GitHub's upload-artifact action can be used to upload the created artifact to GitHub.
 
 
 ## Where does the upload go?

@@ -6,7 +6,7 @@ inputs:
     description: "Path to docker-compose.yml file"
     required: true
   compose-file-variables:
-    description: "Variables to use if compose file is a template, e.g. 'NAME:VARIABLE', multiple values separated by a space"
+    description: "Variables to use if compose file is a template, e.g. 'NAME=VARIABLE', multiple values separated by a space"
     required: false
     default: ""
   software-name:
