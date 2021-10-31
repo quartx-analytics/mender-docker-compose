@@ -24,16 +24,25 @@ parser.add_argument(
 parser.add_argument(
     "COMPOSEFILE", type=Path, help="Path to docker-compose file"
 )
+parser.add_argument(
+    "--env", "-e", action="append", default=[],
+    help="Set compose file environment variable",
+)
 parsed_args, passthrough_args = parser.parse_known_args()
+
+# Convert --env into a .env file
+with tempfile.NamedTemporaryFile(mode="w", delete=False) as envfile:
+    envfile.writelines(parsed_args.env)
+envfile = Path(envfile.name).with_name("envfile")
 
 # Build metadata file
 metadata = {
     "compose_file": parsed_args.COMPOSEFILE.name,
     "project_name": parsed_args.software_name,
+    "envfile": envfile.name,
 }
-metafile = tempfile.NamedTemporaryFile(mode="w", delete=False)
-json.dump(metadata, metafile.file)
-metafile.close()
+with tempfile.NamedTemporaryFile(mode="w", delete=False) as metafile:
+    json.dump(metadata, metafile.file)
 
 # Build output-path & artifact-name
 artifact_name = f"{parsed_args.software_name}-{parsed_args.software_version}".replace(" ", "-")
@@ -46,6 +55,7 @@ write_command = [
     "--type", "docker-compose",
     "--artifact-name", artifact_name,
     "--file", str(parsed_args.COMPOSEFILE.resolve()),
+    "--file", str(envfile.resolve()),
     "--output-path", output_path,
     "--software-name", parsed_args.software_name,
     "--software-version", parsed_args.software_version,
