@@ -21,8 +21,11 @@ private_key = tempfile.NamedTemporaryFile(mode="w", delete=False)
 private_key.write(parsed_args.signing_key)
 private_key.close()
 
-# Extract variables from argument
-variables = map(lambda x: f"--env {x}", parsed_args.variables.split(" "))
+# Extract env variables from argument
+variables = []
+for env in parsed_args.variables.split(" "):
+    variables.append("--env")
+    variables.append(env)
 
 try:
     subprocess.run(

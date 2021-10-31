@@ -22,11 +22,11 @@ parser.add_argument(
     help="Path to the private key that will be used to sign the artifact"
 )
 parser.add_argument(
-    "COMPOSEFILE", type=Path, help="Path to docker-compose file"
+    "--env", action="append", default=[],
+    help="Set compose file environment variable",
 )
 parser.add_argument(
-    "-e", "--env", action="append", default=[],
-    help="Set compose file environment variable",
+    "COMPOSEFILE", type=Path, help="Path to docker-compose file"
 )
 parsed_args, passthrough_args = parser.parse_known_args()
 
