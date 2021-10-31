@@ -34,12 +34,8 @@ parsed_args, passthrough_args = parser.parse_known_args()
 # Convert --env into a .env file
 with tempfile.NamedTemporaryFile(mode="w", delete=False) as envfile:
     envfile.writelines(parsed_args.env)
-
-print(envfile.name)
-print(os.path.exists(envfile.name))
-envfile = Path(envfile.name).with_name("envfile")
-print(envfile)
-print(os.path.exists(envfile.name))
+envfile = Path(envfile.name)
+envfile = envfile.rename(envfile.with_name("envfile"))
 
 # Build metadata file
 metadata = {
