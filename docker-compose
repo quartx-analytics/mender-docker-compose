@@ -29,8 +29,8 @@ case "$STATE" in
         COMPOSE_FILE=$(jq -r ".compose_file" "$FILES"/header/meta-data)
         PROJECT_NAME=$(jq -r ".project_name" "$FILES"/header/meta-data)
         ENVFILE=$(jq -r ".envfile" "$FILES"/header/meta-data)
-        docker-compose --file "$FILES"/files/"$COMPOSE_FILE" --env-file "$ENVFILE" --project-name "$PROJECT_NAME" pull
-        docker-compose --file "$FILES"/files/"$COMPOSE_FILE" --env-file "$ENVFILE" --project-name "$PROJECT_NAME" up --detach --no-color --remove-orphans
+        docker-compose --file "$FILES"/files/"$COMPOSE_FILE" --env-file "$FILES"/files/"$ENVFILE" --project-name "$PROJECT_NAME" pull
+        docker-compose --file "$FILES"/files/"$COMPOSE_FILE" --env-file "$FILES"/files/"$ENVFILE" --project-name "$PROJECT_NAME" up --detach --no-color --remove-orphans
         ;;
 
     ArtifactRollback)
