@@ -17,7 +17,7 @@ steps:
 
   - id: mender
     name: Create mender artifact
-    uses: quartx-analytics/mender-docker-compose@v1.1.1
+    uses: quartx-analytics/mender-docker-compose@v1.1.2
     with:
       compose-file: "docker-compose.yml"
       software-name: "project-name"
@@ -26,10 +26,11 @@ steps:
       compose-file-variables: "IMAGE_TAG=latest"  # Optional
 
   - name: Upload mender artifact
-    uses: actions/upload-artifact@v2
+    uses: quartx-analytics/mender-artifact-uploader@v1.0.0
     with:
-      name: mender-artifacts
-      path: ${{ steps.mender.outputs.artifact-file }}
+      artifact: ${{ steps.mender.outputs.artifact-file }}
+      username: ${{ secrets.MENDER_USER }}
+      password: ${{ secrets.MENDER_PASS }}
 ```
 Here we specify the filename for the docker compose file, the file that contains all the details required to
 build the docker container(s).
@@ -39,20 +40,13 @@ The artifact will not work on any other device but what is specified.
 A signing-key can also be specified if required, this will ensure that the artifact has not been changed after creation.
 It will also force the artifact to only work on the mender server that contains the corresponding private key.
 
-GitHub's upload-artifact action can then be used to upload the created artifact to GitHub.
-Support for variables within the docker compose file is supported. See [here](https://docs.docker.com/compose/environment-variables/) for how to use compose file variables.
-The variables can be passed in using the "compose-file-variables" input key. The format is "NAME=VARIABLE", multiple variables are separated by a space.
-
-GitHub's upload-artifact action can be used to upload the created artifact to GitHub.
-
-
-## Where does the upload go?
-At the bottom of the workflow summary page, there is a dedicated section for artifacts.
+We can then our other action that can upload the mender artifact to a mender server.
+See [upload-artifact](https://github.com/actions/upload-artifact)
 
 
 # Notes
 For the artifact to work on mender, all mender devices need to have docker compose installed.
-The docker-compose update module from this repo also needs to be placed in the
+The `docker-compose` update module from this repo also needs to be placed in the
 `/usr/share/mender/modules/v3` directory on all your mender devices.
 
 
